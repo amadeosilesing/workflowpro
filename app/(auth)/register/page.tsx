@@ -12,21 +12,39 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
+  e.preventDefault();
+  setLoading(true);
+  setError("");
 
-    if (password !== confirmPassword) {
-      setError("Las contraseñas no coinciden");
-      setLoading(false);
+  if (password !== confirmPassword) {
+    setError("Las contraseñas no coinciden");
+    setLoading(false);
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setError(data.error);
       return;
     }
 
-    // TODO: conectar con API
-    console.log({ name, email, password });
+    // Redirigir al dashboard
+    window.location.href = "/dashboard";
 
+  } catch {
+    setError("Error al conectar con el servidor");
+  } finally {
     setLoading(false);
-  };
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">

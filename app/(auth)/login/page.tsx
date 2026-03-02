@@ -10,15 +10,33 @@ export default function LoginPage() {
   const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
+  e.preventDefault();
+  setLoading(true);
+  setError("");
 
-    // TODO: conectar con API
-    console.log({ email, password });
+  try {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
 
+    const data = await res.json();
+
+    if (!res.ok) {
+      setError(data.error);
+      return;
+    }
+
+    // Redirigir al dashboard
+    window.location.href = "/dashboard";
+
+  } catch {
+    setError("Error al conectar con el servidor");
+  } finally {
     setLoading(false);
-  };
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
