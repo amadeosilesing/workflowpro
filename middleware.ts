@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { verifyToken } from "@/lib/auth";
 
 export function middleware(request: NextRequest) {
   const token = request.cookies.get("token")?.value;
@@ -14,12 +13,9 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // Con token válido intentando acceder a login/register
+  // Con token en páginas de auth → redirigir al dashboard
   if (isAuthPage && token) {
-    const payload = verifyToken(token);
-    if (payload) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
-    }
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   return NextResponse.next();
