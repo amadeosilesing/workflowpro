@@ -1,15 +1,15 @@
 import Link from "next/link";
-import { Project } from "@/db/schema";
+import { ProjectWithTasks } from "@/hooks/useProjects";
 
 interface ProjectCardProps {
-  project: Project & { tasks: { total: number; done: number } };
+  project: ProjectWithTasks;
   onEdit: () => void;
   onDelete: () => void;
 }
 
 export default function ProjectCard({ project, onEdit, onDelete }: ProjectCardProps) {
-  const progress = project.tasks.total > 0
-    ? Math.round((project.tasks.done / project.tasks.total) * 100)
+  const progress = project.totalTasks > 0
+    ? Math.round((project.doneTasks / project.totalTasks) * 100)
     : 0;
 
   return (
@@ -52,7 +52,7 @@ export default function ProjectCard({ project, onEdit, onDelete }: ProjectCardPr
 
         <div className="mt-4">
           <div className="flex justify-between text-xs text-gray-500 mb-1.5">
-            <span>{project.tasks.done}/{project.tasks.total} tareas</span>
+            <span>{project.doneTasks}/{project.totalTasks} tareas</span>
             <span>{progress}%</span>
           </div>
           <div className="w-full bg-gray-800 rounded-full h-1.5">

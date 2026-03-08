@@ -3,8 +3,13 @@
 import { useState, useEffect } from "react";
 import { Project } from "@/db/schema";
 
+export type ProjectWithTasks = Project & {
+  totalTasks: number;
+  doneTasks: number;
+};
+
 export function useProjects() {
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<ProjectWithTasks[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -43,12 +48,10 @@ export function useProjects() {
   };
 
   const deleteProject = async (id: number) => {
-  const res = await fetch(`/api/projects/${id}`, { method: "DELETE" });
-  const data = await res.json();
-  console.log("DELETE response:", res.status, data); // ← agrega esto
-  if (!res.ok) throw new Error("Error al eliminar proyecto");
-  await fetchProjects();
-};
+    const res = await fetch(`/api/projects/${id}`, { method: "DELETE" });
+    if (!res.ok) throw new Error("Error al eliminar proyecto");
+    await fetchProjects();
+  };
 
   useEffect(() => { fetchProjects(); }, []);
 

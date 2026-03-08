@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { projects } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { projects, tasks } from "@/db/schema";
+import { eq, and, sql } from "drizzle-orm";
 import { verifyToken } from "@/lib/auth";
 
-// GET → listar proyectos del usuario
 export async function GET(req: NextRequest) {
   try {
     const token = req.cookies.get("token")?.value;
@@ -14,9 +13,20 @@ export async function GET(req: NextRequest) {
     if (!payload) return NextResponse.json({ error: "Token inválido" }, { status: 401 });
 
     const userProjects = await db
-      .select()
+      .select({
+        idProjects:  projects.idProjects,
+        name:        projects.name,
+        description: projects.description,
+        userId:      projects.userId,
+        createdAt:   projects.createdAt,
+        updatedAt:   projects.updatedAt,
+        totalTasks:  sql<number>`count(${tasks.idTasks})::int`,
+        doneTasks:   sql<number>`count(case when ${tasks.status} = 'done' then 1 end)::int`,
+      })
       .from(projects)
+      .leftJoin(tasks, eq(tasks.projectId, projects.idProjects))
       .where(eq(projects.userId, payload.idUsers))
+      .groupBy(projects.idProjects)
       .orderBy(projects.createdAt);
 
     return NextResponse.json(userProjects);
@@ -27,7 +37,6 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST → crear proyecto
 export async function POST(req: NextRequest) {
   try {
     const token = req.cookies.get("token")?.value;
