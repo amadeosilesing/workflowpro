@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useUser } from "@/hooks/useUser";
 
 const navItems = [
   {
@@ -26,6 +27,7 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { user } = useUser();
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -68,8 +70,23 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* Logout */}
-      <div className="px-3 py-4 border-t border-gray-800">
+      {/* User + Logout */}
+      <div className="px-3 py-4 border-t border-gray-800 space-y-1">
+
+        {/* Info usuario */}
+        {user && (
+          <div className="flex items-center gap-3 px-3 py-2">
+            <div className="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+              {user.name.charAt(0).toUpperCase()}
+            </div>
+            <div className="overflow-hidden">
+              <p className="text-white text-sm font-medium truncate">{user.name}</p>
+              <p className="text-gray-500 text-xs truncate">{user.email}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Logout */}
         <button
           onClick={handleLogout}
           className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:bg-gray-800 hover:text-white transition"
@@ -79,6 +96,7 @@ export default function Sidebar() {
           </svg>
           Cerrar sesión
         </button>
+
       </div>
 
     </aside>
