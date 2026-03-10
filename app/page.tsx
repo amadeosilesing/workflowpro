@@ -1,14 +1,18 @@
-import Link from "next/link";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+
+  if (token) redirect("/dashboard");
+
   return (
     <div className="min-h-screen bg-gray-950 flex flex-col">
 
       {/* Navbar */}
       <nav className="border-b border-gray-800 bg-gray-900/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-
-          {/* Logo */}
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
               <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -17,72 +21,47 @@ export default function HomePage() {
             </div>
             <span className="text-white font-bold text-lg">WorkFlowPro</span>
           </div>
-
-          {/* Actions */}
           <div className="flex items-center gap-3">
-            <Link
-              href="/login"
-              className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition"
-            >
+            <a href="/login" className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition">
               Iniciar sesión
-            </Link>
-            <Link
-              href="/register"
-              className="px-4 py-2 text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition"
-            >
+            </a>
+            <a href="/register" className="px-4 py-2 text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition">
               Registrarse
-            </Link>
+            </a>
           </div>
-
         </div>
       </nav>
 
       {/* Hero */}
       <section className="flex-1 flex items-center justify-center px-6 py-24">
         <div className="max-w-3xl mx-auto text-center">
-
-          {/* Badge */}
           <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-600/10 border border-indigo-500/20 rounded-full text-indigo-400 text-xs font-medium mb-6">
             <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full" />
             Gestión de proyectos moderna
           </div>
-
-          {/* Title */}
           <h1 className="text-5xl font-extrabold text-white leading-tight mb-6">
             Organiza tu trabajo,{" "}
             <span className="text-indigo-400">multiplica</span>{" "}
             tu productividad
           </h1>
-
-          {/* Subtitle */}
           <p className="text-gray-400 text-lg leading-relaxed mb-10 max-w-xl mx-auto">
-            WorkFlowPro te permite gestionar proyectos y tareas de manera simple y efectiva. 
+            WorkFlowPro te permite gestionar proyectos y tareas de manera simple y efectiva.
             Sin distracciones, solo resultados.
           </p>
-
-          {/* CTA */}
           <div className="flex items-center justify-center gap-4">
-            <Link
-              href="/register"
-              className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl transition text-sm"
-            >
+            <a href="/register" className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl transition text-sm">
               Empezar gratis
-            </Link>
-            <Link
-              href="/login"
-              className="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold rounded-xl transition text-sm"
-            >
+            </a>
+            <a href="/login" className="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold rounded-xl transition text-sm">
               Ya tengo cuenta
-            </Link>
+            </a>
           </div>
-
         </div>
       </section>
 
       {/* Features */}
       <section className="max-w-6xl mx-auto px-6 pb-24 w-full">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-
           {[
             {
               icon: (
@@ -120,7 +99,6 @@ export default function HomePage() {
               <p className="text-gray-400 text-sm leading-relaxed">{feature.description}</p>
             </div>
           ))}
-
         </div>
       </section>
 
